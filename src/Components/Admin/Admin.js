@@ -1,7 +1,8 @@
 import { Link } from "@material-ui/core";
 import React from "react";
 import AddProduct from "../AddProduct/AddProduct";
-import EditProduct from "../EditProduct/EditProduct";
+import EditProduct from "../EditProduct/EditProduct.js";
+
 import "./Admin.css"
 
 const Admin = () => {

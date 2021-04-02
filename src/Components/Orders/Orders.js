@@ -29,7 +29,7 @@ const Orders = () => {
                     <tr>
                         <th>Product Name</th>
                         <th>Quantity</th>
-                        <th>Wight</th>
+                        <th>weight</th>
                         <th>Price</th>
                     </tr>
                 </thead>
@@ -43,7 +43,7 @@ const Orders = () => {
                                     <tr>
                                         <td>{singleOrder.name}</td>
                                         <td>1</td>
-                                        <td>{singleOrder.wight}</td>
+                                        <td>{singleOrder.weight}</td>
                                         <td>${singleOrder.price}</td>
                                     </tr>
                                 </tbody>

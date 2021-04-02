@@ -4,13 +4,13 @@ import { Button, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
 const AddProduct = () => {
-    const { register, handleSubmit, watch, errors, wight, price } = useForm();
+    const { register, handleSubmit, watch, errors, weight, price } = useForm();
     const [imageURL, setIMageURL] = useState(null);
 
     const onSubmit = (data) => {
         const eventData = {
             name: data.name,
-            wight: data.wight,
+            weight: data.weight,
             price: data.price,
             imageURL: imageURL,
         };
@@ -55,10 +55,10 @@ const AddProduct = () => {
                     />
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Product Wight</Form.Label>
+                    <Form.Label>Product weight</Form.Label>
                     <Form.Control
-                        name="wight"
-                        placeholder="Product wight"
+                        name="weight"
+                        placeholder="Product weight"
                         ref={register}
                     />
                 </Form.Group>

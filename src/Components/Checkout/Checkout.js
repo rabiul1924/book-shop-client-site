@@ -16,10 +16,10 @@ const Checkout = () => {
             .then(data => setDetail(data))
     }, [_id]);
     console.log(detail);
-    const {name,price,wight} = detail;
+    const {name,price,weight} = detail;
 
     const handleCheckout = () => {
-      const orderInfo = {name,price,wight,...loggedinUser,orderTime:new Date()}
+      const orderInfo = {name,price,weight,...loggedinUser,orderTime:new Date()}
       const url = `http://localhost:5000/addOrders`
 
 
@@ -42,7 +42,7 @@ const Checkout = () => {
       <th>#</th>
       <th>Product Name</th>
       <th>Quantity</th>
-      <th>Wight</th>
+      <th>weight</th>
       <th>Price</th>
     </tr>
   </thead>
@@ -51,7 +51,7 @@ const Checkout = () => {
       <td>1</td>
       <td>{name}</td>
       <td>1</td>
-      <td>{wight}</td>
+      <td>{weight}</td>
       <td>${price}</td>
     </tr>
     <tr>
