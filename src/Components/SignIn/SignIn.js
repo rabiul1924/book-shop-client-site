@@ -1,143 +1,167 @@
 import React, { useContext, useState } from 'react';
-import './SignIn.css';
-import { UserContext } from '../../App';
-import { useHistory, useLocation } from 'react-router';
-import { createUserWithEmailAndPassword, SignInUserWithEmailAndPassword, gitHubSignIn, googleSignIn, initializeSignIn, updateUserInfo }  from './signInManager';
+import { Container } from 'react-bootstrap';
 
-const SignIn = () =>
-{
-    initializeSignIn();
+import './SignIn.css';
+import googleIcon from '../../images/icons/google.png';
+import fbIcon from '../../images/icons/fb.png';
+import { UserContext } from '../../App';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { createUserWithEmailAndPassword, handleFbSignIn, handleGoogleSignIn, handleSignOut, initializeLoginFramework, signInWithEmailAndPassword } from './signInManager';
+
+const Login = () => {
     const [loggedInUser, setLoggedInUser] = useContext(UserContext);
-    const [newUser, setNewUser] = useState(false);
-    const [user, setUser] = useState({
-        isSignIn: false,
-        userName: '',
-        email: '',
-        password: '',
-        imgSrc: '',
-        error: '',
-        success: false
-    });
 
     const history = useHistory();
     const location = useLocation();
     const { from } = location.state || { from: { pathname: "/" } };
+    initializeLoginFramework();
 
-    const handleResponse = (res, redirect) =>
-    {
-        setUser(res)
-        setLoggedInUser(res)
-        if (redirect)
-        {
+    const [newUser, setNewUser] = useState(false);
+
+    const [user, setUser] = useState({
+        isSignedIn: false,
+        displayName: '',
+        email: '',
+        password: '',
+        confirmPassword: false,
+        error: '',
+        success: false
+    })
+    // console.log(user.error);
+
+    const handleResponse = (res, redirect) => {
+        setUser(res);
+        setLoggedInUser(res);
+        if (redirect) {
             history.replace(from);
         }
     }
-
-    const handleGoogleSignIn = () =>
-    {
-        googleSignIn()
-            .then(res =>
-            {
-                handleResponse(res, true)
-            })
-    }
-
-    const handleGitHubSignIn = () =>
-    {
-        gitHubSignIn()
-            .then(res =>
-            {
+    const googleSignIn = () => {
+        handleGoogleSignIn()
+            .then(res => {
                 handleResponse(res, true);
-                setLoggedInUser(res);
+            })
+    }
+    const fbSignIn = () => {
+        handleFbSignIn()
+            .then(res => {
+                handleResponse(res, true);
+            })
+    }
+    const signOut = () => {
+        handleSignOut()
+            .then(res => {
+                handleResponse(res, false);
             })
     }
 
-    const handleSubmit = (event) =>
-    {
-        if (newUser && user.name && user.email && user.password)
-        {
-            createUserWithEmailAndPassword(user.name, user.email, user.password)
-                .then(res =>
-                {
-                    handleResponse(res, true);
-                    updateUserInfo(user.name);
-                })
+    const handleBlur = (e) => {
+        let isFieldValid = true;
+        if (e.target.name === 'email') {
+            isFieldValid = /\S+@\S+\.\S+/.test(e.target.value);
         }
-        if (!newUser && user.email && user.password)
-        {
-            SignInUserWithEmailAndPassword(user.email, user.password)
-                .then(res =>
-                {
-                    handleResponse(res, true);
-                    setLoggedInUser(res);
-                })
+        if (e.target.name === 'password') {
+            const isPasswordValid = e.target.value.length > 6;
+            const passwordHasNumber = /\d{1}/.test(e.target.value);
+            isFieldValid = isPasswordValid && passwordHasNumber;
+
         }
-        event.preventDefault();
-    }
-
-    const handleBlur = (event) =>
-    {
-        let isFormValid;
-
-        if (event.target.name === 'name')
-        {
-            isFormValid = event.target.value.length > 4;
-        }
-
-        if (event.target.name === 'email')
-        {
-            isFormValid = /\S+@\S+\.\S+/.test(event.target.value);
-        }
-
-        if (event.target.name === 'password')
-        {
-            const isPasswordValid = event.target.value.length > 6;
-            const isPasswordHasNumber = /\d{1}/.test(event.target.value);
-            isFormValid = isPasswordValid && isPasswordHasNumber;
-        }
-
-        if (isFormValid)
-        {
+        if (isFieldValid) {
             const newUserInfo = { ...user };
-            newUserInfo[event.target.name] = event.target.value;
+            newUserInfo[e.target.name] = e.target.value;
             setUser(newUserInfo);
         }
+        if (e.target.name === 'confirmPassword') {
+            if (e.target.value === user.password) {
+                const newUserInfo = { ...user };
+                newUserInfo[e.target.name] = true;
+                setUser(newUserInfo);
+                document.getElementById("confirmPasswordMessage").innerText = "";
+            }
+            else {
+                const newUserInfo = { ...user };
+                newUserInfo[e.target.name] = false;
+                setUser(newUserInfo);
+                document.getElementById("confirmPasswordMessage").innerText = "Password didn't matched!!!";
+            }
+
+        }
     }
 
+    // -----------------------submit event handler------------------------
+    const handleSubmit = (e) => {
+        if (newUser && user.email && user.password) {
+            createUserWithEmailAndPassword(user.name, user.email, user.password)
+                .then(res => {
+                    handleResponse(res, true);
+                })
+        }
+        if (!newUser && user.email && user.password) {
+            signInWithEmailAndPassword(user.email, user.password)
+                .then(res => {
+                    handleResponse(res, true);
+                })
+        }
+        e.preventDefault();
+    }
     return (
-        <div className="form-signin mt-5">
-            <form onSubmit={handleSubmit}>
-                <h1 className="h3 mb-3 fw-normal">{newUser ? 'Create an account' : 'Signin'}</h1>
-                {
-                    newUser &&
-                    <>
-                        <label htmlFor="inputName" className="visually-hidden">User Name</label>
-                        <input type="text" onBlur={handleBlur} name="name" className="form-control" placeholder="User Name" required />
-                    </>
-                }
-                <label htmlFor="inputEmail" className="visually-hidden">Email address</label>
-                <input type="email" onBlur={handleBlur} name="email" className="form-control" placeholder="Email address" required autoFocus />
-                <label htmlFor="inputPassword" className="visually-hidden">Password</label>
-                <input type="password" onBlur={handleBlur} name="password" className="form-control" placeholder="Password" required />
-                <button className="w-100 btn btn-lg btn-outline-success mb-2" type="submit">{newUser ? 'Create an account' : 'Signin'}</button>
-                <p>{newUser ? 'Already have an account' : 'Don’t have an account'} ?
-                 <span onClick={() => setNewUser(!newUser)} className="text-warning" style={{ cursor: 'pointer' }}>
-                        {newUser ? ' Signin' : ' Create an account'}
-                    </span></p>
-                <p>Or</p>
-                <hr />
-                <button onClick={handleGoogleSignIn} className="w-100 btn btn-lg btn-outline-success mb-2" type="submit">Connect with Google</button>
-                <button onClick={handleGitHubSignIn} className="w-100 btn btn-lg btn-outline-success mb-2" type="submit">Connect with GitHub</button>
-            </form>
-            {
-                console.log(user)
-            }
-            <p style={{ color: 'red' }}>{user.error}</p>
-            {
-                user.success && <p style={{ color: 'green' }}>User {newUser ? 'created' : 'Logged In'} successfully</p>
-            }
-        </div>
+        <Container bg="light">
+       
+            <Container>
+                <div className="row mx-auto">
+                    <form onSubmit={handleSubmit} className="login-form mx-auto my-5 w-50 py-4 px-5 rounded">
+                        {!newUser ? <h3>Login</h3> : <h3>Create an account</h3>}
+                        {newUser && <input type="text" className="custom-input" onBlur={handleBlur} name="name" placeholder="Enter Name" required />}
+                        <br />
+                        <input type="email" onBlur={handleBlur} className="custom-input" name="email" placeholder="Username or Email" required />
+                        <br />
+                        <input type="password" onBlur={handleBlur} className="custom-input" name="password" placeholder="Password" required />
+                        {newUser && <small className="text-danger">*Minimum password length 6 & must contain a number!</small>}
+                        <br />
+                        {newUser && <input type="password" className="custom-input" onBlur={handleBlur} name="confirmPassword" placeholder="Confirm Password" id="confirmPasswordMessage" required />}
+                        
+                        <div className="d-flex justify-content-between">
+                            <div className="mr-2 font-weight-bold">
+                                {
+                                    !newUser && <><input type="checkbox" name="rememberPassword" />
+                                        <span className="ml-2">Remember Me</span></>
+                                }
+                            </div>
+                            <div>
+                                {!newUser && <Link to="#">Forgot Password</Link>}
+                            </div>
+                        </div>
+                        <input type="submit" variant="warning" value={newUser ? 'Create an account' : 'Login'} className="my-4 btn-block font-weight-bold" />
+                        {
+                            newUser ?
+                                <p className="text-center">Already have an account?
+                                <Link to="#" onClick={() => setNewUser(!newUser)}>Login</Link>
+                                </p>
+                                :
+                                <p className="text-center">Don't have an account?
+                                <Link to="#" onClick={() => setNewUser(!newUser)}>Create an account</Link>
+                                </p>
+                        }
+                        <p style={{ color: 'red' }}>{user.error}</p>
+                        {
+                            user.success && <p style={{ color: 'green' }}>User {newUser ? 'Created' : 'Logged in '} successfully!</p>
+                        }
+                    </form>
+                </div>
+                <div className="login-others text-center">
+                    <span className="login-or">Or</span>
+                    <br />
+                    <button onClick={fbSignIn}>
+                        <img src={fbIcon} alt="fb-icon" /> Continue with Facebook
+                    </button>
+                    <br />
+                    <button onClick={googleSignIn}>
+                        <img src={googleIcon} alt="google-icon" /> Continue with Google
+                    </button>
+                </div>
+            </Container>
+        </Container>
     );
 };
 
-export default SignIn;
+export default Login;
