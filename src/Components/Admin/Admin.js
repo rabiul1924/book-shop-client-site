@@ -19,12 +19,13 @@ const Admin = () => {
                     <Link to="#editproduct">Edit Product</Link>
                     {/* <h3>Edit Product</h3> */}
                 </div>
-                <div className="col-md-9 adminBody" id="addProduct">
-                    <AddProduct></AddProduct>
+                <div className="col-md-9 adminBody" id='text'>
+                    <AddProduct>Add Product</AddProduct>
                     
                 </div>
-                <div className="col-md-9 adminBody" id="editproduct">
-                <EditProduct></EditProduct>
+                <br/>
+                <div className="col-md-9 adminBody" id='text'>
+                <EditProduct>Edit Product </EditProduct>
                 </div>
                </div>
             </div>

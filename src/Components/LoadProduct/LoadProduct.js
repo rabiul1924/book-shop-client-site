@@ -15,30 +15,19 @@ const LoadProduct = (props) => {
      history.push(url)
    }
     return (
-        <>
-            <div className=" cards d-flex flex-wrap justify-content-between">
-            <div className="col-md-4 col-sm-12 ">
-                <Card className="singleCard" >
-                    <Card.Img variant="top" className="img-fluid" src={imageURL} />
-                    <Card.Body>
-                        <Card.Title > {name} </Card.Title>
-
-                        <Card.Text>
-                            <Row>
-                                <Col md={6}>
-                                    Weight : {weight} <br />
-                                    Price : ${price}
-                                </Col>
-                                <Col md={6} >
-                                    {<Button className="btnStyle" variant="primary" onClick={()=>handleBuyNow(_id)}>Buy Now</Button>}
-                                </Col>
-                            </Row>
-                        </Card.Text>
-                    </Card.Body>
-                </Card>
-            </div>
-            </div>
-        </>
+        <div className="col-md-3 ">
+        <Card style={{ width: '18rem', margin:'20px', padding:'10px' }}>
+              <Card.Img variant="top" src={imageURL} />
+            <Card.Body>
+         <Card.Title>{name}</Card.Title>
+         <Card.Text>
+        Price:   ${price} - 
+        Weight: {weight}gm
+          </Card.Text>
+          {<Button className="btnStyle" variant="primary" onClick={()=>handleBuyNow(_id)}>Buy Now</Button>}
+          </Card.Body>
+       </Card>
+    </div>
 
     );
 };
