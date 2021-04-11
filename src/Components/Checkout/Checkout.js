@@ -10,7 +10,7 @@ const Checkout = () => {
     const [loggedinUser, setLoggedinUser] = useContext(UserContext);
 
     useEffect(() => {
-        const url = `http://localhost:5000/checkout/${_id}`
+        const url = `https://glacial-brushlands-79275.herokuapp.com/checkout/${_id}`
         fetch(url)
             .then(res => res.json())
             .then(data => setDetail(data))

@@ -15,7 +15,7 @@ const AddProduct = () => {
             imageURL: imageURL,
         };
         console.log(data);
-        const url = `http://localhost:5000/addEvent`;
+        const url = `https://glacial-brushlands-79275.herokuapp.com/addEvent`;
 
         fetch(url, {
             method: "POST",
@@ -29,7 +29,7 @@ const AddProduct = () => {
     const handleImageUpload = (event) => {
         console.log(event.target.files[0]);
         const imageData = new FormData();
-        imageData.set("key", "dde3c3bb7c106f0d15bdad728e6bff80");
+        imageData.set("key", "7605ef76d8d3259218d304496dfb10d8");
         imageData.append("image", event.target.files[0]);
 
         axios
